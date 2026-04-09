@@ -26,3 +26,48 @@ Install the tools using your package manager. We also require `jq` to parse JSON
 ```bash
 sudo apt update
 sudo apt install ffmpeg mkvtoolnix mediainfo jq
+```
+
+### For macOS
+Install the tools easily using [Homebrew](https://brew.sh/):
+```bash
+brew install ffmpeg mkvtoolnix media-info jq
+```
+
+---
+
+## 🚀 How to Use
+
+### On Windows
+1. Open PowerShell.
+2. Run the script:
+   ```powershell
+   .\InteractiveMediaCleaner.ps1
+   ```
+   *(Note: If Windows blocks the script, run `Set-ExecutionPolicy RemoteSigned -Scope CurrentUser` to allow custom scripts).*
+3. Drag and drop your video file into the window and hit Enter.
+4. Follow the on-screen prompts to select your audio and subtitle tracks!
+
+### On Linux & macOS
+1. Open your Terminal.
+2. Make the script executable (you only need to do this once):
+   ```bash
+   chmod +x InteractiveMediaCleaner.sh
+   ```
+3. Run the script:
+   ```bash
+   ./InteractiveMediaCleaner.sh
+   ```
+   *(Pro-Tip: You can also launch it and pass the file directly by running `./InteractiveMediaCleaner.sh "/path/to/movie.mkv"`)*
+4. Follow the on-screen prompts to select your audio and subtitle tracks!
+
+---
+
+## 🛠️ How It Works (The Pipeline)
+1. **Phase 1 (Scanning):** `ffprobe` scans the file and generates a clean, interactive list of all available audio and subtitle tracks.
+2. **Phase 2 (Logic):** `mediainfo` checks your chosen audio track for spatial object data to decide between passthrough copying or FLAC compression.
+3. **Phase 3 (Extraction):** `ffmpeg` strips all subtitle tracks you didn't select, converts the audio, drops chapter metadata, and writes a temporary MKV.
+4. **Phase 4 (Cleaning):** `mkvpropedit` takes over to obliterate all hidden attachments, global tags, and track-statistic tags, delivering your final, optimized file.
+```
+
+Let me know if you want to tweak any wording or add anything else to it before you commit it!
