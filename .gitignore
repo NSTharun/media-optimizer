@@ -1,0 +1,8 @@
+# Ignore large media files (so you don't accidentally upload movies)
+*.mkv
+*.mp4
+*.avi
+*.webm
+
+# Ignore the temporary processing file created by your PowerShell script
+ffmpeg_temp_output.mkv
