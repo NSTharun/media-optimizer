@@ -4,7 +4,7 @@ A cross-platform, interactive command-line tool that cleans, optimizes, and stri
 
 ## ✨ Key Features
 * **🧠 Smart Spatial Audio Logic:** Uses MediaInfo to scan for Dolby Atmos and DTS:X metadata. If spatial audio is detected, it preserves the track as an untouched `copy`. If standard lossless audio (TrueHD / DTS-HD MA) is detected, it converts it to `FLAC` to save massive amounts of storage space.
-* **🧹 Total Metadata Wipe:** Drops all embedded cover art, attachments, and global/track tags using MKVToolNix, resulting in a perfectly clean `.mkv` file.
+* **🧹 Deep Container Remux:** Instead of just editing tags, the tool performs a fresh remux using MKVToolNix. This ensures all "ghost" metadata is purged and track headers (like FLAC bitrate/info) are accurately updated.
 * **🖱️ Drag-and-Drop Support:** No need to type out long file paths. Just drag your video file right into the terminal.
 * **💻 Cross-Platform:** Native scripts available for Windows (PowerShell) and Linux/macOS (Bash).
 
@@ -18,7 +18,7 @@ This tool relies on a synergy of three powerful media tools. You must have them 
 Download and install the following tools. Make sure their `.exe` locations are added to your Windows Environment Variables (`PATH`).
 1. **[FFmpeg](https://ffmpeg.org/download.html)**
 2. **[MediaInfo (CLI Version)](https://mediaarea.net/en/MediaInfo/Download/Windows)** *(Must be the command-line version, not the GUI)*
-3. **[MKVToolNix](https://mkvtoolnix.download/downloads.html#windows)** *(We use `mkvpropedit.exe` included in the installation folder)*
+3. **[MKVToolNix](https://mkvtoolnix.download/downloads.html#windows)** *(We use `mkvmerge.exe` included in the installation folder)*
 
 ### For Linux
 Install the tools using your package manager. We also require `jq` to parse JSON outputs.
@@ -64,10 +64,8 @@ brew install ffmpeg mkvtoolnix media-info jq
 ---
 
 ## 🛠️ How It Works (The Pipeline)
-1. **Phase 1 (Scanning):** `ffprobe` scans the file and generates a clean, interactive list of all available audio and subtitle tracks.
+1. **Phase 1 (Scanning):** `ffprobe` scans the file and generates a clean, interactive list of all available audio and subtitle tracks while preserving original language metadata.
 2. **Phase 2 (Logic):** `mediainfo` checks your chosen audio track for spatial object data to decide between passthrough copying or FLAC compression.
-3. **Phase 3 (Extraction):** `ffmpeg` strips all subtitle tracks you didn't select, converts the audio, drops chapter metadata, and writes a temporary MKV.
-4. **Phase 4 (Cleaning):** `mkvpropedit` takes over to obliterate all hidden attachments, global tags, and track-statistic tags, delivering your final, optimized file.
+3. **Phase 3 (Scrubbing):** `ffmpeg` strips unwanted tracks, converts the audio, drops chapter metadata, and obliterates global metadata using `-map_metadata -1`.
+4. **Phase 4 (Final Remux):** `mkvmerge` performs a fresh container remux. This step wipes remaining global/track tags, drops all attachments, updates the FLAC technical headers, and automatically sets your selected subtitle as the "Default Track."
 ```
-
-Let me know if you want to tweak any wording or add anything else to it before you commit it!
